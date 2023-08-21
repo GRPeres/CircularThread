@@ -9,7 +9,7 @@ struct Thread {
 	int dur = 1;      
 }; 
 
-Thread lista[10];
+Thread listao[10];
 int auxlist[10] = { 0,0,0,0,0,0,0,0,0,0, };
 int aux = 0;
 int ordem = 0;
@@ -24,12 +24,12 @@ void Cadastrar(Thread thread) {
 	scanf_s("%d%*c", &thread.dur);
 
 	if (aux < 10) {
-		lista[aux] = thread;
+		listao[aux] = thread;
 		auxlist[aux] = 1;
 		aux++;
 	}
 	else {
-		lista[aux] = thread;
+		listao[aux] = thread;
 		auxlist[aux] = 1;
 		aux = 0;
 	}
@@ -41,11 +41,12 @@ void Executar(Thread thread) {
 	if (thread.dur <= 0) {
 		cout << thread.id << " foi finalizado. \n";
 		auxlist[ordem] = 0;
+		thread.pri = 100;
 	} 
 	else {
 		cout << " Faltam " << thread.dur << " Clocks. \n";
 	}
-	lista[ordem] = thread;
+	listao[ordem] = thread;
 }
 int Finaliza(int auxlist[10]) {
 	for (int i = 0; i < 10; i++) {
@@ -55,15 +56,24 @@ int Finaliza(int auxlist[10]) {
 		}
 	}
 	finished = true;
-	return 0;
 }
+
 void Gerencia(Thread lista[10]) {
 	while (!finished)
 	{
+		int n = 0;
 		if (auxlist[ordem] == 1) {
-			Executar(lista[ordem]);
-		}
-		if (ordem < sizeof(lista)) {
+			for (int g = 0; g < 10; g++) {
+				if (lista[ordem].pri <= listao[g].pri) {
+					n++;
+				}
+			}
+			if (n == 10) {
+				Executar(lista[ordem]);
+			}
+		}	
+		if (ordem <= 10) {
+			n = 0;
 			ordem++;
 		}
 		else {
@@ -71,7 +81,6 @@ void Gerencia(Thread lista[10]) {
 		}
 		Finaliza(auxlist);
 	}
-	finished = false;
 }
 
 int main() {
@@ -81,7 +90,7 @@ int main() {
 	Cadastrar(A);
 	Cadastrar(B);
 	Cadastrar(C);
-	Gerencia(lista);
+	Gerencia(listao);
 	return 0;
 
 }
