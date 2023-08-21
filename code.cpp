@@ -5,11 +5,11 @@ using namespace std;
 
 struct Thread {
 	int id = -1;
-	int pri = 0; 
-	int dur = 1;      
-}; 
+	int pri = 100;
+	int dur = 1;
+};
 
-Thread listao[10];
+Thread lista[10];
 int auxlist[10] = { 0,0,0,0,0,0,0,0,0,0, };
 int aux = 0;
 int ordem = 0;
@@ -24,29 +24,33 @@ void Cadastrar(Thread thread) {
 	scanf_s("%d%*c", &thread.dur);
 
 	if (aux < 10) {
-		listao[aux] = thread;
+		lista[aux] = thread;
 		auxlist[aux] = 1;
 		aux++;
 	}
 	else {
-		listao[aux] = thread;
+		lista[aux] = thread;
 		auxlist[aux] = 1;
 		aux = 0;
 	}
 }
 
 void Executar(Thread thread) {
-	cout << thread.id << " foi executado. \n";
-	thread.dur--;
-	if (thread.dur <= 0) {
-		cout << thread.id << " foi finalizado. \n";
-		auxlist[ordem] = 0;
-		thread.pri = 100;
-	} 
-	else {
-		cout << " Faltam " << thread.dur << " Clocks. \n";
+	while (true)
+	{
+		cout << thread.id << " foi executado. \n";
+		thread.dur--;
+		if (thread.dur <= 0) {
+			cout << thread.id << " foi finalizado. \n";
+			auxlist[ordem] = 0;
+			thread.pri = 100;
+			break;
+		}
+		else {
+			cout << " Faltam " << thread.dur << " Clocks. \n";
+		}
 	}
-	listao[ordem] = thread;
+	lista[ordem] = thread;
 }
 int Finaliza(int auxlist[10]) {
 	for (int i = 0; i < 10; i++) {
@@ -56,24 +60,21 @@ int Finaliza(int auxlist[10]) {
 		}
 	}
 	finished = true;
+	return 0;
 }
-
 void Gerencia(Thread lista[10]) {
+	int n = 0;
 	while (!finished)
 	{
-		int n = 0;
 		if (auxlist[ordem] == 1) {
-			for (int g = 0; g < 10; g++) {
-				if (lista[ordem].pri <= listao[g].pri) {
-					n++;
+			for (int i = 0; i < 10; i++) {
+				if (lista[ordem].pri <= n) {
+					Executar(lista[ordem]);
 				}
 			}
-			if (n == 10) {
-				Executar(lista[ordem]);
-			}
-		}	
-		if (ordem <= 10) {
-			n = 0;
+			n++;
+		}
+		if (ordem < sizeof(lista)) {
 			ordem++;
 		}
 		else {
@@ -81,6 +82,7 @@ void Gerencia(Thread lista[10]) {
 		}
 		Finaliza(auxlist);
 	}
+	finished = false;
 }
 
 int main() {
@@ -90,7 +92,7 @@ int main() {
 	Cadastrar(A);
 	Cadastrar(B);
 	Cadastrar(C);
-	Gerencia(listao);
+	Gerencia(lista);
 	return 0;
 
 }
