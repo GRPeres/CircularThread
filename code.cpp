@@ -71,6 +71,7 @@ void Gerencia(Thread lista[10]) {
 		}
 		Finaliza(auxlist);
 	}
+	finished = false;
 }
 
 int main() {
